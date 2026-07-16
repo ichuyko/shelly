@@ -57,20 +57,17 @@ const REASON = {
  ****************************************************/
 
 let state = {
-
     status: STATUS.STARTING,
     timer: null,
     currentUrl: "",
     retryCounter: 0,
     checkInProgress: false
-
 };
 /****************************************************
  * Diagnostic information
  ****************************************************/
 
 let info = {
-
     startAt: Date.now(),
     lastReason: REASON.STARTUP,
     lastPowerOnAt: 0,
@@ -85,16 +82,11 @@ let info = {
 };
 
 
-
-
-
-
 function onPowerCycle(res, err) {
 
     if (err) {
         print("Power cycle ERROR:", err);
-    }
-    else {
+    } else {
         print("Power cycle started");
     }
 
@@ -105,7 +97,6 @@ function onPowerCycle(res, err) {
         REASON.POWER_RESTORED
     );
 }
-
 
 
 /****************************************************
@@ -170,57 +161,34 @@ function powerCycle() {
 }
 
 
-
-
-
-
-
 function clearCurrentInternetUrl() {
-
     state.currentUrl = "";
-
 }
 
 function setCurrentInternetUrl(url) {
-
     state.currentUrl = url;
-
 }
 
 function getNextInternetUrl(currentUrl) {
-
     if (currentUrl === "") {
-
         return INTERNET_URLS[0];
-
     }
 
     var i;
-
     for (i = 0; i < INTERNET_URLS.length; i++) {
-
         if (INTERNET_URLS[i] === currentUrl) {
-
             if (i + 1 < INTERNET_URLS.length) {
-
                 return INTERNET_URLS[i + 1];
-
             }
-
             return null;
-
         }
-
     }
 
     return null;
-
 }
 
 function moveToNextInternetUrl() {
-
     var nextUrl;
-
     nextUrl = getNextInternetUrl(
         state.currentUrl
     );
@@ -236,11 +204,8 @@ function moveToNextInternetUrl() {
 }
 
 function checkCurrentInternetUrl() {
-
     state.status = STATUS.CHECK_INTERNET;
-
-    info.lastCheckedUrl =
-        state.currentUrl;
+    info.lastCheckedUrl = state.currentUrl;
 
     print(
         "Checking:",
@@ -259,7 +224,6 @@ function checkCurrentInternetUrl() {
 }
 
 function onInternetResponse(result, errorCode, errorMessage) {
-
     info.lastHttpError = errorCode;
 
     if (
@@ -267,8 +231,7 @@ function onInternetResponse(result, errorCode, errorMessage) {
         result.code !== undefined
     ) {
         info.lastHttpCode = result.code;
-    }
-    else {
+    } else {
         info.lastHttpCode = 0;
     }
 
@@ -277,8 +240,7 @@ function onInternetResponse(result, errorCode, errorMessage) {
     //
     if (!errorCode) {
 
-        info.lastSuccessfulUrl =
-            state.currentUrl;
+        info.lastSuccessfulUrl = state.currentUrl;
         clearCurrentInternetUrl();
         onInternetOK();
         return;
@@ -287,8 +249,7 @@ function onInternetResponse(result, errorCode, errorMessage) {
     //
     // Current URL failed.
     //
-    info.lastFailedUrl =
-        state.currentUrl;
+    info.lastFailedUrl = state.currentUrl;
 
     print(
         "FAILED:",
@@ -300,29 +261,22 @@ function onInternetResponse(result, errorCode, errorMessage) {
     moveToNextInternetUrl();
 
 }
+
 function onInternetOK() {
-
     state.retryCounter = 0;
-
     clearCurrentInternetUrl();
-
     print("Internet OK");
 
     state.status = STATUS.WAIT_BOOT;
-
     scheduleMainChecker(
         CHECK_INTERVAL_SEC,
         REASON.CHECK_INTERVAL
     );
-
 }
 
 function onInternetFAIL() {
-
     state.retryCounter++;
-
     clearCurrentInternetUrl();
-
     print(
         "Internet FAIL. Retry",
         state.retryCounter,
@@ -334,17 +288,12 @@ function onInternetFAIL() {
     // Retry later
     //
     if (state.retryCounter < INTERNET_RETRY_COUNT) {
-
         state.status = STATUS.WAIT_INTERNET_RETRY;
-
         scheduleMainChecker(
             INTERNET_RETRY_DELAY_SEC,
-
             REASON.CHECK_INTERVAL
         );
-
         return;
-
     }
 
     print(
@@ -354,7 +303,6 @@ function onInternetFAIL() {
     state.retryCounter = 0;
     state.status = STATUS.REBOOT_ROUTER;
     powerCycle();
-
 }
 
 function checkInternet() {
@@ -375,45 +323,32 @@ function checkInternet() {
 
 
 function onStartupStatus(res, err) {
-
     if (err) {
-
         print("Switch.GetStatus ERROR:", err);
-
         state.status = STATUS.WAIT_BOOT;
 
         scheduleMainChecker(
             BOOT_WAIT_SEC,
             REASON.GETSTATUS_ERROR
         );
-
         return;
-
     }
 
     if (res.output) {
-
         print("Relay already ON");
-
         state.status = STATUS.WAIT_BOOT;
-
         scheduleMainChecker(
             BOOT_WAIT_SEC,
             REASON.RELAY_ALREADY_ON
         );
-
         return;
-
     }
 
     print("Relay is OFF");
-
     powerON();
-
 }
 
 function onMainCheckPowerStatus(res, err) {
-
     state.checkInProgress = false;
     state.status = STATUS.CHECK_POWER;
 
@@ -442,13 +377,10 @@ function onMainCheckPowerStatus(res, err) {
  ****************************************************/
 
 function onTimer() {
-
     state.timer = null;
-
     if (state.status === STATUS.WAIT_BOOT) {
         mainChecker();
         return;
-
     }
 
     if (state.status === STATUS.WAIT_INTERNET_RETRY) {
@@ -460,7 +392,6 @@ function onTimer() {
         "Unexpected timer state:",
         state.status
     );
-
 }
 
 /****************************************************
@@ -468,13 +399,9 @@ function onTimer() {
  ****************************************************/
 
 function scheduleMainChecker(delaySec, reason) {
-
     if (state.timer !== null) {
-
         Timer.clear(state.timer);
-
         state.timer = null;
-
     }
 
     info.lastReason = reason;
@@ -491,13 +418,10 @@ function scheduleMainChecker(delaySec, reason) {
         false,
         onTimer
     );
-
 }
 
 function powerON() {
-
     print("Turning relay ON");
-
     Shelly.call(
         "Switch.Set",
         {
@@ -506,7 +430,6 @@ function powerON() {
         },
         onPowerOn
     );
-
 }
 
 /****************************************************
@@ -514,9 +437,7 @@ function powerON() {
  ****************************************************/
 
 function mainChecker() {
-
     print("--------------------------------");
-
     print("mainChecker()");
 
     if (state.checkInProgress) {
@@ -541,11 +462,9 @@ function mainChecker() {
  ****************************************************/
 
 function startup() {
-
     print("Shelly Router Watchdog started");
 
     state.status = STATUS.STARTING;
-
     info.lastReason = REASON.STARTUP;
 
     Shelly.call(
@@ -555,7 +474,6 @@ function startup() {
         },
         onStartupStatus
     );
-
 }
 
 /****************************************************
@@ -568,24 +486,18 @@ startup();
 function onPowerOn(res, err) {
 
     if (err) {
-
         print("powerON ERROR:", err);
-
         state.status = STATUS.WAIT_BOOT;
 
         scheduleMainChecker(
             BOOT_WAIT_SEC,
             REASON.POWERON_ERROR
         );
-
         return;
-
     }
 
     info.lastPowerOnAt = Date.now();
-
     info.powerOnCounter++;
-
     state.status = STATUS.WAIT_BOOT;
 
     print("Relay turned ON");
@@ -594,6 +506,4 @@ function onPowerOn(res, err) {
         BOOT_WAIT_SEC,
         REASON.POWER_RESTORED
     );
-
 }
-
