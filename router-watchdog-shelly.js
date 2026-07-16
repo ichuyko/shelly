@@ -1,7 +1,9 @@
 /****************************************************
  * Shelly Router Watchdog
  *
- * version 2.0.0-beta0
+ * router-watchdog-shelly.js
+ *
+ * version 2.0.1
  *
  ****************************************************/
 
@@ -12,9 +14,9 @@
 const SWITCH_ID = 0;
 const BOOT_WAIT_SEC = 60 * 5;
 const CHECK_INTERVAL_SEC = 60 * 60 * 2;
-const INTERNET_RETRY_DELAY_SEC = 60 * 3;
+const INTERNET_RETRY_DELAY_SEC = 60 * 5;
 const INTERNET_RETRY_COUNT = 3;
-const POWER_TOGGLE_AFTER_SEC = 30;
+const POWER_TOGGLE_AFTER_SEC = 60;
 
 /****************************************************
  * Status
@@ -104,28 +106,6 @@ function onPowerCycle(res, err) {
     );
 }
 
-// function powerCycle() {
-//
-//     info.lastPowerCycleAt = Date.now();
-//
-//     info.powerCycleCounter++;
-//
-//     print(
-//         "Power cycling router..."
-//     );
-//
-//     Shelly.call(
-//         "Switch.Set",
-//         {
-//             id: SWITCH_ID,
-//             on: false,
-//             toggle_after: POWER_TOGGLE_AFTER_SEC
-//         },
-//         onPowerCycle
-//     );
-//
-// }
-//
 
 
 /****************************************************
@@ -277,41 +257,6 @@ function checkCurrentInternetUrl() {
     );
 
 }
-
-// function onInternetResponse(result, errorCode, errorMessage) {
-//
-//     info.lastHttpError = errorCode;
-//
-//     if (
-//         result &&
-//         result.code !== undefined
-//     ) {
-//         info.lastHttpCode = result.code;
-//     } else {
-//         info.lastHttpCode = 0;
-//     }
-//
-//     if (!errorCode) {
-//         info.lastSuccessfulUrl =
-//             state.currentUrl;
-//         clearCurrentInternetUrl();
-//         onInternetOK();
-//         return;
-//     }
-//
-//     info.lastFailedUrl =
-//         state.currentUrl;
-//
-//     print(
-//         "FAILED:",
-//         state.currentUrl,
-//         errorCode,
-//         errorMessage
-//     );
-//
-//     moveToNextInternetUrl();
-// }
-
 
 function onInternetResponse(result, errorCode, errorMessage) {
 

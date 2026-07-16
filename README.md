@@ -7,8 +7,6 @@
 Основная цель проекта — максимальная надежность при долговременной непрерывной работе.
 
 
-# Router Watchdog для Shelly
-
 # Devices
 
 * Shelly PlusPlugS
@@ -19,9 +17,6 @@
 Shelly devices run JavaScript directly on-device for local automation and integrations—no cloud or external servers required. Scripts execute on a modified version of Espruino, providing a JavaScript environment that's close to the standard while optimized for embedded systems. 
 
 https://shelly-api-docs.shelly.cloud/gen2/Scripts/Overview
-
-
-
 
 ---
 
@@ -260,6 +255,4 @@ ON
 
 # Текущий статус
 
-Версия находится в стадии длительного тестирования.
-
-После накопления статистики непрерывной работы планируется выпуск версии 1.0.
+Версия находится в использовании + тестирование продолжается.
