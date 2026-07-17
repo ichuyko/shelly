@@ -1,9 +1,11 @@
 /****************************************************
  * Shelly Router Watchdog
  *
- * router-watchdog-shelly.js
+ * router-watchdog-on-shelly-plug.js
  *
- * version 2.0.1
+ * https://github.com/ichuyko/shelly/
+ *
+ * version 2.1.1
  *
  ****************************************************/
 
@@ -12,11 +14,12 @@
  ****************************************************/
 
 const SWITCH_ID = 0;
-const BOOT_WAIT_SEC = 60 * 5;
-const CHECK_INTERVAL_SEC = 60 * 60 * 2;
-const INTERNET_RETRY_DELAY_SEC = 60 * 5;
+const BOOT_WAIT_SEC = 60 * 5; // 5 mins
+const CHECK_INTERVAL_SEC = 60 * 60 * 2; // 12 hours
+const INTERNET_RETRY_DELAY_SEC = 60 * 5; // 5 mins
 const INTERNET_RETRY_COUNT = 3;
 const POWER_TOGGLE_AFTER_SEC = 60;
+const MIN_POWER_CYCLE_INTERVAL_SEC = 60 * 60 * 12; // 12 hours
 
 /****************************************************
  * Status
@@ -32,9 +35,14 @@ const STATUS = {
 };
 
 const INTERNET_URLS = [
-    "http://captive.apple.com/hotspot-detect.html",
+    "http://cp.cloudflare.com/generate_204",
     "https://connectivitycheck.gstatic.com/generate_204",
-    "http://1.1.1.1"
+    "http://captive.apple.com/hotspot-detect.html",
+    "http://detectportal.firefox.com/canonical.html",
+    "http://edge-http.microsoft.com/captiveportal/generate_204",
+    "https://cp.cloudflare.com/generate_204",
+    "http://detectportal.firefox.com/canonical.html",
+    "http://www.msftconnecttest.com/connecttest.txt",
 ];
 
 /****************************************************
@@ -81,6 +89,15 @@ let info = {
     powerCycleCounter: 0,
 };
 
+function canPowerCycle() {
+
+    if (info.lastPowerCycleAt === 0) {
+        return true;
+    }
+
+    return (Date.now() - info.lastPowerCycleAt) >= (MIN_POWER_CYCLE_INTERVAL_SEC * 1000);
+
+}
 
 function onPowerCycle(res, err) {
 
@@ -104,6 +121,7 @@ function onPowerCycle(res, err) {
  ****************************************************/
 
 function onPowerCycleStatus(res, err) {
+
     if (err) {
         print("Switch.GetStatus ERROR:", err);
         //
@@ -302,7 +320,17 @@ function onInternetFAIL() {
 
     state.retryCounter = 0;
     state.status = STATUS.REBOOT_ROUTER;
-    powerCycle();
+
+    if (canPowerCycle()) {
+        powerCycle();
+    } else {
+        print("Power cycle skipped (minimum interval not reached).");
+        state.status = STATUS.WAIT_BOOT;
+        scheduleMainChecker(
+            CHECK_INTERVAL_SEC,
+            REASON.CHECK_INTERVAL
+        );
+    }
 }
 
 function checkInternet() {
