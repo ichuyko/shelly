@@ -5,7 +5,7 @@
  *
  * https://github.com/ichuyko/shelly/
  *
- * version 2.1.1
+ * version 2.1.2
  *
  ****************************************************/
 
@@ -15,10 +15,10 @@
 
 const SWITCH_ID = 0;
 const BOOT_WAIT_SEC = 60 * 5; // 5 mins
-const CHECK_INTERVAL_SEC = 60 * 60 * 2; // 12 hours
+const CHECK_INTERVAL_SEC = 60 * 60 * 2; // 2 hours
 const INTERNET_RETRY_DELAY_SEC = 60 * 5; // 5 mins
 const INTERNET_RETRY_COUNT = 3;
-const POWER_TOGGLE_AFTER_SEC = 60;
+const POWER_TOGGLE_AFTER_SEC = 60 * 10; // 10 mins
 const MIN_POWER_CYCLE_INTERVAL_SEC = 60 * 60 * 12; // 12 hours
 
 /****************************************************
