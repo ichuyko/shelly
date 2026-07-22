@@ -5,7 +5,7 @@
  *
  * https://github.com/ichuyko/shelly/
  *
- * version 2.1.2
+ * version 2.1.3
  *
  ****************************************************/
 
@@ -36,13 +36,11 @@ const STATUS = {
 
 const INTERNET_URLS = [
     "http://cp.cloudflare.com/generate_204",
-    "https://connectivitycheck.gstatic.com/generate_204",
     "http://captive.apple.com/hotspot-detect.html",
     "http://detectportal.firefox.com/canonical.html",
     "http://edge-http.microsoft.com/captiveportal/generate_204",
+    "https://connectivitycheck.gstatic.com/generate_204",
     "https://cp.cloudflare.com/generate_204",
-    "http://detectportal.firefox.com/canonical.html",
-    "http://www.msftconnecttest.com/connecttest.txt",
 ];
 
 /****************************************************
