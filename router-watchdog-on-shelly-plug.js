@@ -18,7 +18,7 @@ const BOOT_WAIT_SEC = 60 * 5; // 5 mins
 const CHECK_INTERVAL_SEC = 60 * 60 * 2; // 2 hours
 const INTERNET_RETRY_DELAY_SEC = 60 * 5; // 5 mins
 const INTERNET_RETRY_COUNT = 3;
-const POWER_TOGGLE_AFTER_SEC = 60 * 10; // 10 mins
+const POWER_TOGGLE_AFTER_SEC = 60 * 15; // 15 mins
 const MIN_POWER_CYCLE_INTERVAL_SEC = 60 * 60 * 12; // 12 hours
 
 /****************************************************
